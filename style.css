@@ -38,12 +38,12 @@
   background-color: var(--bg-color);
 }
 
-.calculation {
+/* .calculation {
   display: flex;
   justify-content: end;
-}
+} */
 
-.calculation textarea {
+.calculation input {
   width: 100%;
   padding: 10px 10px;
   background-color: transparent;
@@ -63,7 +63,6 @@
 
 .operation button {
   background-color: transparent;
-  display: flex;
   font-size: 35px;
   color: white;
   cursor: pointer;
