@@ -1,0 +1,98 @@
+:root {
+  --bg-color: #2e2e2e;
+  --main-color: #ff9000e6;
+  --text-color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+.c-main {
+  color: var(--main-color) !important;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eee;
+}
+
+.content {
+  width: 350px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: var(--bg-color);
+}
+
+.calculation {
+  display: flex;
+  justify-content: end;
+}
+
+.calculation input {
+  width: 100%;
+  padding: 10px 10px;
+  background-color: transparent;
+  font-size: 35px;
+  color: white;
+  /* caret-color: transparent; */
+}
+
+.operation {
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.operation button {
+  background-color: transparent;
+  display: flex;
+  font-size: 35px;
+  color: white;
+  cursor: pointer;
+}
+
+.operation button:nth-last-child(3) {
+  grid-column: 1 / 3;
+}
+
+.operation button,
+i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  width: 60px;
+  height: 60px;
+  padding: 10px;
+  border-radius: 50%;
+  transition: .2s;
+}
+
+.operation button:hover {
+  background-color: #4e4e4e;
+}
+
+.operation button[class=equal] {
+  background-color: var(--main-color);
+}
+
+.operation button[class="equal"]:hover {
+  transform: scale(.9);
+}
