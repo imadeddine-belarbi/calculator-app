@@ -1,9 +1,9 @@
 let currentInput = '';
-let lastChar = '+';
+let lastChar = '';
 let currentNumber = '';
 const symbols = ['+', '-', '%', '*', '/', '.'];
 
-const display = document.querySelector('input');
+const display = document.querySelector('textarea');
 
 function isAsymbol(v)
 {
@@ -15,7 +15,7 @@ function isAsymbol(v)
 
 function addToDisplay(v)
 {
-  lastChar = currentInput.charAt(currentInput.length - 1);
+  lastChar = currentInput.length > 0 ? currentInput.charAt(currentInput.length - 1) : '+';
   if (!isAsymbol(lastChar) || !isAsymbol(v))
   {
     currentInput += v;
@@ -37,12 +37,10 @@ function backspaceDisplay()
 
 function calculate()
 {
-  try
-  {
-    currentInput = eval(currentInput).toString();
+  currentInput = eval(currentInput).toString();
+  if (currentInput === "Infinity")
+    display.value = "Divsion by zero"
+  else
     display.value = currentInput;
-  }
-  catch {
-    display.value = 'Error';
-  }
+
 }
