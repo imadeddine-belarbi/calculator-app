@@ -83,30 +83,23 @@ function clear()
 
 function backspace()
 {
-  if (equation.length === 1)
-  {
-    if (equation[0] === '0')
-      return;
-    else if (equation[equation.length - 1].length === 1)
-    {
-      equation = ['0'];
-      currentInputNumber = '';
-    }
-  }
-  else if (equation[equation.length - 1].length === 1)
-  {
-    equation.pop();
-    currentInputNumber = '';
-  }
-  else if (currentInputNumber === '')
+  if (equation.length === 1 && equation[0] === '0')
+    return;
+
+  if (equation[equation.length - 1].length > 1)
   {
     equation[equation.length - 1] = equation[equation.length - 1].slice(0, -1);
     currentInputNumber = equation[equation.length - 1];
   }
+  else if (equation.length === 1)
+  {
+    equation = ['0'];
+    currentInputNumber = '';
+  }
   else
   {
-    currentInputNumber = currentInputNumber.slice(0, -1);
-    equation[equation.length - 1] = currentInputNumber;
+    equation.pop();
+    currentInputNumber = '';
   }
 }
 
