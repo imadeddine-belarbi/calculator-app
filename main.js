@@ -1,5 +1,3 @@
-
-let lastChar = '';
 let equation = ['0'];
 let currentInputNumber = '';
 const symbols = ['+', '-', '*', '/'];
@@ -85,16 +83,19 @@ function clear()
 
 function backspace()
 {
-  if (equation.length === 1 && equation[0] === '0')
-    return;
-
-
-  if (equation[equation.length - 1].length === 1)
+  if (equation.length === 1)
   {
-    if (equation.length === 1)
-      equation = ['0']
+    if (equation[0] === '0')
+      return;
     else
-      equation.pop();
+    {
+      equation = ['0'];
+      currentInputNumber = '';
+    }
+  }
+  else if (equation[equation.length - 1].length === 1)
+  {
+    equation.pop();
     currentInputNumber = '';
   }
   else if (currentInputNumber === '')
@@ -114,17 +115,17 @@ function calculate()
   try
   {
     results = eval(equation.join(''));
-    if (results === "Infinity")
+    console.log(results);
+    if (results === Infinity)
     {
-      equation = ['0']
-      currentInputNumber = ''
-      display.value = "Divsion by zero"
+      display.value = "Divsion by zero";
+      equation = ['0'];
+      currentInputNumber = '';
     }
     else
     {
-      equation = [results];
-      currentInputNumber = results;
-      display.value = results;
+      currentInputNumber = results.toString();
+      equation = [currentInputNumber];
     }
   }
   catch {
