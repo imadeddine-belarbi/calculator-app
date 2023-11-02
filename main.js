@@ -1,89 +1,135 @@
-let currentInput = '0';
-let currentOperation = '0';
+
 let lastChar = '';
-const symbols = ['+', '-', '*', '/', '.'];
+let equation = ['0'];
+let currentInputNumber = '';
+const symbols = ['+', '-', '*', '/'];
 
 const display = document.querySelector('input');
-display.value = currentOperation;
+display.value = equation.join('');
 
-function isAsymbol(v)
+const btnsOperation = document.querySelectorAll("button[data-type=operator]");
+btnsOperation.forEach((btn) =>
 {
-  for (let s of symbols)
-    if (s === v)
-      return true;
-  return false;
-}
-
-function addToDisplay(v)
-{
-  if (currentInput.length > 16)
-    return;
-
-  if (currentInput === '0')
-    currentInput = '';
-  lastChar = currentInput.length > 0 ? currentInput.charAt(currentInput.length - 1) : '+';
-  if (!isAsymbol(lastChar) || !isAsymbol(v))
+  btn.addEventListener("click", (e) =>
   {
-    currentInput += v;
-    display.value = currentInput;
-    currentOperation += v;
+    switch (e.target.innerText)
+    {
+      case "AC":
+        clear();
+        break;
+      case "C":
+        backspace();
+        break;
+      case "%":
+        addPercent();
+        break;
+      case "=":
+        calculate();
+        break;
+      default:
+        addSymbol(e.target.innerText);
+        break;
+    }
+    display.value = equation.join('');
+  })
+})
+
+const btnsOperand = document.querySelectorAll("button[data-type=operand]");
+btnsOperand.forEach((btn) =>
+{
+  btn.addEventListener("click", (e) =>
+  {
+    if (e.target.innerText === '%')
+      addPercent();
+    else
+      addNumber(e.target.innerText);
+
+    display.value = equation.join('');
+  })
+})
+
+function addSymbol(symbol)
+{
+  if (currentInputNumber !== '')
+  {
+    equation.push(symbol);
+    currentInputNumber = '';
   }
 }
 
-function addPercentToDisplay()
+function addPercent()
 {
-  if (currentInput.length > 16)
-    return;
-  lastChar = currentInput.length > 0 ? currentInput.charAt(currentInput.length - 1) : '+';
-  if (!isAsymbol(lastChar))
+  if (currentInputNumber !== '')
+    equation[equation.length - 1] = (+equation[equation.length - 1] / 100).toString();
+}
+
+function addNumber(number)
+{
+  if ((equation.length === 1 && equation[0] === '0') || currentInputNumber !== '')
   {
-    currentInput += '%';
-    display.value = currentInput;
-    currentOperation += '/100';
+    currentInputNumber += number;
+    equation[equation.length - 1] = currentInputNumber;
+  }
+  else 
+  {
+    equation.push(number);
+    currentInputNumber = number;
   }
 }
 
-function clearDisplay()
+function clear()
 {
-  currentInput = '0';
-  currentOperation = '0'
-  display.value = '0';
+  currentInputNumber = '';
+  equation = ['0'];
 }
 
-function backspaceDisplay()
+function backspace()
 {
-  if (currentInput === '0')
+  if (equation.length === 1 && equation[0] === '0')
     return;
 
-  lastChar = currentInput.charAt(currentInput.length - 1);
-  currentOperation = lastChar === '%' ? currentOperation.slice(0, -1) : currentOperation.slice(0, -4);
-  currentInput = currentInput.slice(0, -1);
 
-  if (currentInput === '')
-    currentInput = '0';
-  display.value = currentInput;
+  if (equation[equation.length - 1].length === 1)
+  {
+    if (equation.length === 1)
+      equation = ['0']
+    else
+      equation.pop();
+    currentInputNumber = '';
+  }
+  else if (currentInputNumber === '')
+  {
+    equation[equation.length - 1] = equation[equation.length - 1].slice(0, -1);
+    currentInputNumber = equation[equation.length - 1];
+  }
+  else
+  {
+    currentInputNumber = currentInputNumber.slice(0, -1);
+    equation[equation.length - 1] = currentInputNumber;
+  }
 }
 
 function calculate()
 {
   try
   {
-    currentOperation = eval(currentOperation).toString();
-    if (currentOperation === "Infinity")
+    results = eval(equation.join(''));
+    if (results === "Infinity")
     {
-      currentInput = '0';
-      currentOperation = '0';
+      equation = ['0']
+      currentInputNumber = ''
       display.value = "Divsion by zero"
     }
     else
     {
-      currentInput = currentOperation;
-      display.value = currentOperation;
+      equation = [results];
+      currentInputNumber = results;
+      display.value = results;
     }
   }
   catch {
-    currentInput = '0';
-    currentOperation = '0';
+    equation = ['0'];
+    currentInputNumber = '';
     display.value = "Error";
   }
 }
