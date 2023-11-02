@@ -87,7 +87,7 @@ function backspace()
   {
     if (equation[0] === '0')
       return;
-    else
+    else if (equation[equation.length - 1].length === 1)
     {
       equation = ['0'];
       currentInputNumber = '';
