@@ -1,50 +1,59 @@
 let equation = ['0'];
 let currentInputNumber = '';
+let result = '';
+let calc = false;
 const symbols = ['+', '-', '*', '/'];
 
 const display = document.querySelector('input');
 display.value = equation.join('');
 
-const btnsOperation = document.querySelectorAll("button[data-type=operator]");
-btnsOperation.forEach((btn) =>
+const btns = document.querySelectorAll("button");
+btns.forEach(btn => btn.addEventListener('click', e =>
 {
-  btn.addEventListener("click", (e) =>
-  {
-    switch (e.target.innerText)
-    {
-      case "AC":
-        clear();
-        break;
-      case "C":
-        backspace();
-        break;
-      case "%":
-        addPercent();
-        break;
-      case "=":
-        calculate();
-        break;
-      default:
-        addSymbol(e.target.innerText);
-        break;
-    }
-    display.value = equation.join('');
-  })
-})
+  renderButtons(e.target);
+  displayResult();
+  renderError();
+}));
 
-const btnsOperand = document.querySelectorAll("button[data-type=operand]");
-btnsOperand.forEach((btn) =>
+function renderButtons(btn)
 {
-  btn.addEventListener("click", (e) =>
+  if (btn.getAttribute('data-type') === 'operator')
+    renderOperatorButtons(btn.innerText);
+  else if (btn.getAttribute('data-type') === 'operand')
   {
-    if (e.target.innerText === '%')
+    renderOperandButtons(btn);
+  }
+}
+
+function renderOperatorButtons(operator)
+{
+  switch (operator)
+  {
+    case "AC":
+      clear();
+      break;
+    case "C":
+      backspace();
+      break;
+    case "%":
       addPercent();
-    else
-      addNumber(e.target.innerText);
+      break;
+    case "=":
+      calculate();
+      break;
+    default:
+      addSymbol(operator);
+      break;
+  }
+}
 
-    display.value = equation.join('');
-  })
-})
+function renderOperandButtons(btn)
+{
+  if (btn.innerText === '%')
+    addPercent();
+  else
+    addNumber(btn.innerText);
+}
 
 function addSymbol(symbol)
 {
@@ -58,7 +67,10 @@ function addSymbol(symbol)
 function addPercent()
 {
   if (currentInputNumber !== '')
+  {
     equation[equation.length - 1] = (+equation[equation.length - 1] / 100).toString();
+    currentInputNumber = equation[equation.length - 1];
+  }
 }
 
 function addNumber(number)
@@ -105,25 +117,98 @@ function backspace()
 
 function calculate()
 {
-  try
+  calc = true;
+  if (symbols.includes(equation[equation.length - 1]))
   {
-    results = eval(equation.join(''));
-    console.log(results);
-    if (results === Infinity)
-    {
-      display.value = "Divsion by zero";
-      equation = ['0'];
-      currentInputNumber = '';
-    }
-    else
-    {
-      currentInputNumber = results.toString();
-      equation = [currentInputNumber];
-    }
+    result = 'Error';
+    return;
   }
-  catch {
+  result = evaluate();
+
+  if (result !== 'Error' && result !== 'Division By Zero')
+  {
+    equation = [result];
+    currentInputNumber = result;
+  }
+  else
+  {
     equation = ['0'];
     currentInputNumber = '';
-    display.value = "Error";
+  }
+}
+
+function evaluate()
+{
+  const eval = [...equation];
+
+  const isDivisionByzero = multiplicationAndDivisionOpeartions(eval);
+  if (isDivisionByzero)
+    return 'Division By Zero';
+  additionAndSubtractionOperations(eval);
+
+  return eval[0];
+}
+
+function multiplicationAndDivisionOpeartions(eval)
+{
+  let operator = '';
+  for (let i = 1; i < eval.length; i++)
+  {
+    operator = eval[i];
+    if (operator === '*' || operator === '/')
+    {
+      if (operator === '*')
+        eval[i] = `${+eval[i - 1] * +eval[i + 1]}`;
+      else
+      {
+        if (eval[i + 1] === '0')
+          return true;
+        eval[i] = `${+eval[i - 1] / +eval[i + 1]}`;
+      }
+      eval.splice(i - 1, 1);
+      eval.splice(i, 1);
+      i = 0;
+    }
+  }
+  return false;
+}
+
+function additionAndSubtractionOperations(eval)
+{
+  let operator = '';
+  for (let i = 1; i < eval.length; i++)
+  {
+    operator = eval[i];
+    if (operator === '+' || operator === '-')
+    {
+      if (operator === '+')
+        eval[i] = `${+eval[i - 1] + +eval[i + 1]}`;
+      else
+        eval[i] = `${+eval[i - 1] - +eval[i + 1]}`;
+
+      eval.splice(i - 1, 1);
+      eval.splice(i, 1);
+      i = 0;
+    }
+  }
+}
+
+function displayResult()
+{
+  if (calc)
+    display.value = result;
+  else
+    display.value = equation.join('');
+
+  calc = false;
+}
+
+function renderError()
+{
+  if (result === 'Error' || result === 'Division By Zero')
+  {
+    equation = ['0'];
+    currentInputNumber = '';
+    result = '';
   }
 }
